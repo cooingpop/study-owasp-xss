@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="=ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS 보호 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .comparison {
+            display: flex;
+            margin-top: 10px;
+        }
+        .comparison-column {
+            flex: 1;
+            padding: 10px;
+            margin-right: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .comparison-column:last-child {
+            margin-right: 0;
+        }
+        .comparison-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        .comparison-content {
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .test-examples {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .test-examples h3 {
+            margin-bottom: 5px;
+        }
+        .test-examples code {
+            display: block;
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        .info-box {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>XSS 보호 테스트 페이지</h1>
+    <div class="info-box">
+        <p><strong>XSS 보호 정보:</strong></p>
+        <p>이 페이지에서는 애플리케이션에 구현된 XSS 테스트할 수 있습니다.</p>
+    </div>
+
+    <div class="test-section">
+        <h2>테스트 1: 쿼리 파라미터 XSS 보호</h2>
+        <p>GET 요청을 사용하여 쿼리 파라미터에 대한 XSS 보호를 테스트합니다.</p>
+        <input type="text" id="queryParamInput" placeholder="잠재적인 XSS 페이로드가 포함된 텍스트 입력">
+        <button onclick="testQueryParam()">쿼리 파라미터 테스트</button>
+
+        <div class="comparison">
+            <div class="comparison-column">
+                <div class="comparison-header">Original Input</div>
+                <div id="queryParamOriginal" class="comparison-content">아직 데이터가 없습니다...</div>
+            </div>
+            <div class="comparison-column">
+                <div class="comparison-header">Sanitized Output</div>
+                <div id="queryParamSanitized" class="comparison-content">아직 데이터가 없습니다...</div>
+            </div>
+        </div>
+
+        <div class="test-examples">
+            <h3>테스트 예제 (클릭하여 사용):</h3>
+            <code onclick="useExample(this, 'queryParamInput')">&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+            <code onclick="useExample(this, 'queryParamInput')">&lt;img src="x" onerror="alert('XSS')"&gt;</code>
+            <code onclick="useExample(this, 'queryParamInput')">&lt;a href="javascript:alert('XSS')"&gt;Click me&lt;/a&gt;</code>
+            <code onclick="useExample(this, 'queryParamInput')">&lt;iframe src="javascript:alert('XSS')"&gt;&lt;/iframe&gt;</code>
+            <code onclick="useExample(this, 'queryParamInput')">&lt;svg onload="alert('XSS')"&gt;</code>
+            <code onclick="useExample(this, 'queryParamInput')">Normal text without XSS</code>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>테스트 2: 요청 본문 XSS 보호</h2>
+        <p>POST 요청을 사용하여 JSON 요청 본문에 대한 XSS 보호를 테스트합니다.</p>
+        <input type="text" id="requestBodyInput" placeholder="잠재적인 XSS 페이로드가 포함된 텍스트 입력">
+        <button onclick="testRequestBody()">요청 본문 테스트</button>
+
+        <div class="comparison">
+            <div class="comparison-column">
+                <div class="comparison-header">Original Input</div>
+                <div id="requestBodyOriginal" class="comparison-content">아직 데이터가 없습니다...</div>
+            </div>
+            <div class="comparison-column">
+                <div class="comparison-header">Sanitized Output</div>
+                <div id="requestBodySanitized" class="comparison-content">아직 데이터가 없습니다...</div>
+            </div>
+        </div>
+
+        <div class="test-examples">
+            <h3>테스트 예제 (클릭하여 사용):</h3>
+            <code onclick="useExample(this, 'requestBodyInput')">&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+            <code onclick="useExample(this, 'requestBodyInput')">&lt;img src="x" onerror="alert('XSS')"&gt;</code>
+            <code onclick="useExample(this, 'requestBodyInput')">&lt;a href="javascript:alert('XSS')"&gt;Click me&lt;/a&gt;</code>
+            <code onclick="useExample(this, 'requestBodyInput')">&lt;iframe src="javascript:alert('XSS')"&gt;&lt;/iframe&gt;</code>
+            <code onclick="useExample(this, 'requestBodyInput')">&lt;svg onload="alert('XSS')"&gt;</code>
+            <code onclick="useExample(this, 'requestBodyInput')">Normal text without XSS</code>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>테스트 3: HTML 콘텐츠 XSS 보호</h2>
+        <p>사용자 입력이 포함된 HTML 콘텐츠를 반환할 때 XSS 보호를 테스트합니다.</p>
+        <input type="text" id="htmlInput" placeholder="잠재적인 XSS 페이로드가 포함된 텍스트 입력">
+        <button onclick="testHtmlContent()">HTML 콘텐츠 테스트</button>
+
+        <div class="comparison">
+            <div class="comparison-column">
+                <div class="comparison-header">Original Input</div>
+                <div id="htmlOriginal" class="comparison-content">아직 데이터가 없습니다...</div>
+            </div>
+            <div class="comparison-column">
+                <div class="comparison-header">Sanitized Output</div>
+                <div id="htmlSanitized" class="comparison-content">아직 데이터가 없습니다...</div>
+            </div>
+        </div>
+
+        <iframe id="htmlFrame" style="width: 100%; height: 100px; border: 1px solid #ddd; margin-top: 10px; display: none;"></iframe>
+
+        <div class="test-examples">
+            <h3>테스트 예제 (클릭하여 사용):</h3>
+            <code onclick="useExample(this, 'htmlInput')">&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+            <code onclick="useExample(this, 'htmlInput')">&lt;img src="x" onerror="alert('XSS')"&gt;</code>
+            <code onclick="useExample(this, 'htmlInput')">&lt;a href="javascript:alert('XSS')"&gt;Click me&lt;/a&gt;</code>
+            <code onclick="useExample(this, 'htmlInput')">&lt;iframe src="javascript:alert('XSS')"&gt;&lt;/iframe&gt;</code>
+            <code onclick="useExample(this, 'htmlInput')">&lt;svg onload="alert('XSS')"&gt;</code>
+            <code onclick="useExample(this, 'htmlInput')">Normal text without XSS</code>
+            <code onclick="useExample(this, 'htmlInput')">&lt;div style="color: red"&gt;Styled text&lt;/div&gt;</code>
+        </div>
+    </div>
+
+    <script>
+        // 현재 URL 경로에서 appGroup 가져오기
+        function getAppGroup() {
+            const pathParts = window.location.pathname.split('/');
+            // 선행 슬래시 다음의 첫 번째 부분이 appGroup입니다
+            return pathParts[1] || '';
+        }
+
+        function testQueryParam() {
+            const input = document.getElementById('queryParamInput').value;
+            const originalElement = document.getElementById('queryParamOriginal');
+            const sanitizedElement = document.getElementById('queryParamSanitized');
+            const appGroup = getAppGroup();
+
+            originalElement.textContent = 'Loading...';
+            sanitizedElement.textContent = 'Loading...';
+
+            // 원본 입력 저장
+            originalElement.textContent = input;
+
+            fetch(`/${appGroup}/api/xss-test/echo?input=${encodeURIComponent(input)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Check if input was sanitized or just encoded
+                    if (data.isSanitized) {
+                        // If sanitized, show both the sanitized output and the message
+                        sanitizedElement.textContent = data.original;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #2196F3;"><strong>Note:</strong> XSS content was sanitized!</div>';
+                    } else if (input !== data.original) {
+                        // If encoded (not sanitized), show the encoded output and the message
+                        sanitizedElement.textContent = data.original;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #2196F3;"><strong>Note:</strong> XSS content was sanitized!</div>';
+                    } else {
+                        // If no XSS detected, show the original and a message
+                        sanitizedElement.textContent = data.original;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #4CAF50;"><strong>Note:</strong> No XSS content detected.</div>';
+                    }
+                })
+                .catch(error => {
+                    sanitizedElement.textContent = `Error: ${error.message}`;
+                });
+        }
+
+        function testRequestBody() {
+            const input = document.getElementById('requestBodyInput').value;
+            const originalElement = document.getElementById('requestBodyOriginal');
+            const sanitizedElement = document.getElementById('requestBodySanitized');
+            const appGroup = getAppGroup();
+
+            originalElement.textContent = 'Loading...';
+            sanitizedElement.textContent = 'Loading...';
+
+            // 원본 입력 저장
+            originalElement.textContent = input;
+
+            fetch(`/${appGroup}/api/xss-test/echo`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ input: input })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if input was sanitized or just encoded
+                    if (data.isSanitized) {
+                        // If sanitized, show both the sanitized output and the message
+                        sanitizedElement.textContent = data.original;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #2196F3;"><strong>Note:</strong> XSS content was sanitized!</div>';
+                    } else if (input !== data.original) {
+                        // If encoded (not sanitized), show the encoded output and the message
+                        sanitizedElement.textContent = data.original;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #2196F3;"><strong>Note:</strong> XSS content was sanitized!</div>';
+                    } else {
+                        // If no XSS detected, show the original and a message
+                        sanitizedElement.textContent = data.original;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #4CAF50;"><strong>Note:</strong> No XSS content detected.</div>';
+                    }
+                })
+                .catch(error => {
+                    sanitizedElement.textContent = `Error: ${error.message}`;
+                });
+        }
+
+        function testHtmlContent() {
+            const input = document.getElementById('htmlInput').value;
+            const originalElement = document.getElementById('htmlOriginal');
+            const sanitizedElement = document.getElementById('htmlSanitized');
+            const iframe = document.getElementById('htmlFrame');
+            const appGroup = getAppGroup();
+
+            originalElement.textContent = 'Loading...';
+            sanitizedElement.textContent = 'Loading...';
+            iframe.style.display = 'none';
+
+            // 원본 입력 저장
+            originalElement.textContent = input;
+
+            fetch(`/${appGroup}/api/xss-test/html?input=${encodeURIComponent(input)}`)
+                .then(response => response.text())
+                .then(data => {
+                    // HTML 응답에서 Satilized된 입력 추출
+                    const inputMatch = data.match(/<p>Your input: (.*?)<\/p>/);
+                    // Extract isSanitized information from meta tag
+                    const sanitizedMatch = data.match(/<meta name="isSanitized" content="(.*?)">/);
+
+                    let sanitizedInput = "";
+                    if (inputMatch && inputMatch[1]) {
+                        sanitizedInput = inputMatch[1];
+                    } else {
+                        sanitizedInput = "응답에서 Satilized된 입력을 추출할 수 없습니다";
+                    }
+
+                    // Check if input was sanitized or just encoded
+                    const isSanitized = sanitizedMatch && sanitizedMatch[1] === "true";
+
+                    if (isSanitized) {
+                        // If sanitized, show both the sanitized output and the message
+                        sanitizedElement.textContent = sanitizedInput;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #2196F3;"><strong>Note:</strong> XSS content was sanitized!</div>';
+                    } else if (input !== sanitizedInput) {
+                        // If encoded (not sanitized), show the encoded output and the message
+                        sanitizedElement.textContent = sanitizedInput;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #2196F3;"><strong>Note:</strong> XSS content was sanitized!</div>';
+                    } else {
+                        // If no XSS detected, show the original and a message
+                        sanitizedElement.textContent = sanitizedInput;
+                        sanitizedElement.innerHTML += '<div style="margin-top: 10px; color: #4CAF50;"><strong>Note:</strong> No XSS content detected.</div>';
+                    }
+
+                    // XSS가 작동하는지 확인하기 위해 iframe에 HTML 표시
+                    iframe.style.display = 'block';
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.open();
+                    iframeDoc.write(data);
+                    iframeDoc.close();
+                })
+                .catch(error => {
+                    sanitizedElement.textContent = `Error: ${error.message}`;
+                });
+        }
+
+        function useExample(element, targetId) {
+            document.getElementById(targetId).value = element.textContent;
+        }
+    </script>
+
+    <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 0.9em;">
+        <h3>이 테스트 페이지 사용 방법</h3>
+        <ol>
+            <li><strong>테스트 선택:</strong> 위의 세 가지 테스트 섹션 중 하나를 선택하세요.</li>
+            <li><strong>입력 입력:</strong> 직접 입력하거나 예제 페이로드 중 하나를 클릭하세요.</li>
+            <li><strong>테스트 실행:</strong> 테스트 버튼을 클릭하여 XSS 보호가 입력을 어떻게 처리하는지 확인하세요.</li>
+            <li><strong>결과 비교:</strong> 원본 입력과 Satilized된 출력이 나란히 표시됩니다.</li>
+            <li><strong>Iframe 확인:</strong> HTML 콘텐츠 테스트의 경우, iframe은 콘텐츠가 브라우저에서 어떻게 렌더링되는지 보여줍니다.</li>
+        </ol>
+        <p><strong>참고:</strong> 이 페이지는 테스트 목적으로만 제공됩니다. </p>
+    </div>
+</body>
+</html>

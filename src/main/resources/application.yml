@@ -1,3 +1,23 @@
 spring:
   application:
     name: study-owasp-xss
+  # Thymeleaf ??
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+
+# ? ?? ??
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# ?? ??
+logging:
+  level:
+    root: INFO
+    com.example.studyowaspxss: DEBUG
+    org.springframework.web: INFO

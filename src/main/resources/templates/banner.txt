@@ -1,0 +1,13 @@
+
+${AnsiStyle.BOLD} ${AnsiColor.MAGENTA}
+
+ ,---. ,--.   ,--. ,--,--. ,---. ,---.  ,-----. ,--.  ,--. ,---.  ,---.
+| .-. ||  |.'.|  |' ,-.  |(  .-'| .-. | '-----'  \  `'  / (  .-' (  .-'
+' '-' '|   .'.   |\ '-'  |.-'  `) '-' '          /  /.  \ .-'  `).-'  `)
+ `---' '--'   '--' `--`--'`----'|  |-'          '--'  '--'`----' `----'
+                                `--'
+
+${AnsiColor.GREEN} :: Spring Boot ::  ${AnsiStyle.BOLD}(${spring-boot.version})
+${AnsiStyle.NORMAL} ${AnsiColor.DEFAULT}
+Java: ${java.version}
+OS: ${os.name} (${os.version}, ${os.arch})
